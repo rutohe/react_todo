@@ -1,3 +1,4 @@
+// {}はreturnいるらしい　癖でつけがちだから忘れずやること
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
@@ -6,8 +7,9 @@ import './App.css'
 
 function App() {
   const [schedule, setSchedule] = useState([])
-  const [modalOpen,setModalOpen] = useState(false);
+  const [modalOpen,setModalOpen] = useState(false)
   const [input,setInput] = useState("")
+  const [isEdit,setIsEdit] = useState({editing:false,row:-1})
 
   return (
     <>
@@ -18,9 +20,37 @@ function App() {
       >
         create schedule 
       </button>
+      <div className='schedule-wrapper'>
       {schedule.map((item,index) => {
-        return <p key={index}>{item}</p>
+        return <div key={index} className={item.checked ? 'row done' :'row'}>
+          <p>{item.text}</p>
+          <input 
+            type="checkbox"
+            checked={item.checked}
+            onChange={()=>{
+              setSchedule((schedule)=>{
+                return schedule.map((scheduleItem,idx)=>{
+                  return index === idx
+                  ? {...scheduleItem,checked: !scheduleItem.checked}
+                  :scheduleItem
+                })
+              })
+            }}  
+          />
+          <button 
+            type='button'
+            className='edit-btn'
+            onClick={()=>{
+              setModalOpen(true)
+              setIsEdit({editing:true,row:index})
+              setInput(item.text)
+            }}
+          >
+            edit schedule
+          </button>
+        </div>
       })}
+      </div>
       {modalOpen && 
       <div 
         className='overlay'
@@ -41,11 +71,22 @@ function App() {
             className='submit-btn'
             onClick={()=>{
               setModalOpen(false)
-              setSchedule((schedule)=>[...schedule,input])
-              setInput("")}
+              if(isEdit.editing){
+                setSchedule((schedule)=>
+                  schedule.map((item,index)=>{
+                    return index == isEdit.row ? {text:input,checked:item.checked} : item
+                  })
+                )
+              }
+              else{
+                setSchedule((schedule)=>[...schedule,{text:input,checked:false}])
+              }
+              setInput("")
+              setIsEdit({editing:false,row:-1})
+            }
             }
           >
-            add schedule
+            {isEdit.editing ? 'edit schedule' : 'add schedule'}
           </button>
         </div>
       </div>
