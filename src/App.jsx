@@ -1,22 +1,38 @@
 // {}はreturnいるらしい　癖でつけがちだから忘れずやること
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './App.css'
 
 function App() {
-  const [schedule, setSchedule] = useState([])
   const [modalOpen,setModalOpen] = useState(false)
   const [input,setInput] = useState("")
   const [isEdit,setIsEdit] = useState({editing:false,row:-1})
 
+
+  const [schedule,setSchedule] = useState(()=>{
+    const savedSchedule = localStorage.getItem('schedule')
+    return (savedSchedule) ? JSON.parse(savedSchedule) : []
+  })
+  useEffect(() => {
+    localStorage.setItem(
+      'schedule',
+      JSON.stringify(schedule)
+    )
+    console.log(localStorage);
+    
+  }, [schedule])
   return (
     <>
       <button
       type='button'
       className='open-btn'
-      onClick={()=>setModalOpen(true)}
+      onClick={()=>{
+        setInput("")
+        setIsEdit({editing:false,row:-1})
+        setModalOpen(true)
+      }}
       >
         create schedule 
       </button>
@@ -48,6 +64,19 @@ function App() {
           >
             edit schedule
           </button>
+          <button
+            type='button'
+            className='delete-btn'
+            onClick={()=>{
+              setSchedule((schedule)=>{
+                return schedule.filter((item,idx)=>{
+                  return index !== idx
+                })
+              })
+            }}
+          >
+            delete schedule
+          </button>
         </div>
       })}
       </div>
@@ -70,11 +99,12 @@ function App() {
             type='button'
             className='submit-btn'
             onClick={()=>{
+              if (!input.trim()) return
               setModalOpen(false)
               if(isEdit.editing){
                 setSchedule((schedule)=>
                   schedule.map((item,index)=>{
-                    return index == isEdit.row ? {text:input,checked:item.checked} : item
+                    return index === isEdit.row ? {text:input,checked:item.checked} : item
                   })
                 )
               }
