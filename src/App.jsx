@@ -38,7 +38,7 @@ function App() {
     setInput("")
     setIsEdit({editing:false,row:-1})
     setDeadline(dateObj)
-    setIsLine(isLine)
+    setIsLine(true)
   }
   const inputEnter = () => {
     if (!input.trim()) return
