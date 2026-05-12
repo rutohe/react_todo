@@ -24,7 +24,7 @@ function App() {
 
   const [schedule,setSchedule] = useState(()=>{
     const savedSchedule = localStorage.getItem('schedule')
-    return (savedSchedule) ? JSON.parse(savedSchedule) : [{text:"",checked:false,deadline:{year:now.getUTCFullYear,month:1,day:1,hour:0,minute:0},isDeadLine:true}]
+    return (savedSchedule) ? JSON.parse(savedSchedule) : [{text:"",checked:false,deadline:{year:now.getFullYear(),month:1,day:1,hour:0,minute:0},isDeadLine:true}]
   })
   useEffect(() => {
     localStorage.setItem(
